@@ -1,4 +1,24 @@
 <!-- src/app/app.component.html -->
+<div class="search">
+  <input
+    type="text"
+    [value]="query"
+    (input)="query = $any($event.target).value"
+    (keyup.enter)="search()"
+    placeholder="Search by author or title (e.g., Shakespeare or Sonnet 18)"
+    aria-label="Search poems by author or title"
+  />
+  <button (click)="search()" [disabled]="loading || !query.trim()">Search</button>
+  <button (click)="clear()" [disabled]="loading && !query">Clear</button>
+</div>
+
+<div *ngIf="loading">Loading…</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+<div *ngIf="!loading && !error && query">
+  <p>Found {{ countAuthor }} by author and {{ countTitle }} by title. Total unique: {{ poems.length }}</p>
+</div>
+
+<!-- Existing content -->
 <div>
   <h2>Shakespeare's Poems</h2>
   <ul>
