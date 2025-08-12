@@ -1,15 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PoemService, Poem } from './poem.service';
+import { Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-root',
+  selector: 'poetry-home',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   query = '';
   loading = false;
   error: string | null = null;
@@ -19,42 +23,80 @@ export class AppComponent {
   countAuthor = 0;
   countTitle = 0;
 
+  private input$ = new Subject<string>();
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+
   constructor(private poemsApi: PoemService) {}
 
-  search() {
-    const name = this.query.trim();
-    if (!name) return;
+  ngOnInit() {
+    // Seed from URL (?q=...)
+    const initial = this.route.snapshot.queryParamMap.get('q') ?? '';
+    this.query = initial;
+    this.input$.next(initial);
 
-    this.loading = true;
-    this.error = null;
+    // Debounced pipeline
+    this.input$
+      .pipe(
+        map(q => q.trim()),
+        debounceTime(400),
+        distinctUntilChanged(),
+        tap(q => {
+          // Update URL (remove q when empty)
+          this.router.navigate([], {
+            queryParams: q ? { q } : { q: null },
+            queryParamsHandling: 'merge',
+            replaceUrl: true,
+          });
+          this.loading = !!q;
+          if (!q) this.resetResults();
+        }),
+        switchMap(q => (q ? this.poemsApi.searchByName(q) : of(null))),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: res => {
+          if (!res) { this.loading = false; return; }
+          this.countAuthor = res.byAuthor.length;
+          this.countTitle = res.byTitle.length;
 
-    this.poemsApi.searchByName(name).subscribe({
-      next: ({ byAuthor, byTitle }) => {
-        this.countAuthor = byAuthor.length;
-        this.countTitle = byTitle.length;
+          const key = (p: Poem) => `${p.author}::${p.title}`;
+          const uniq = new Map<string, Poem>([...res.byAuthor, ...res.byTitle].map(p => [key(p), p]));
+          this.poems = Array.from(uniq.values());
+          this.randomPoem = this.poems.length ? this.poems[Math.floor(Math.random() * this.poems.length)] : undefined;
+          this.error = null;
+          this.loading = false;
+        },
+        error: () => {
+          this.error = 'Failed to fetch poems. Please try again.';
+          this.loading = false;
+        },
+      });
+  }
 
-        // De-duplicate by author+title
-        const key = (p: Poem) => `${p.author}::${p.title}`;
-        const uniq = new Map<string, Poem>();
-        [...byAuthor, ...byTitle].forEach(p => uniq.set(key(p), p));
-        this.poems = Array.from(uniq.values());
+  onQueryChanged() {
+    this.input$.next(this.query);
+  }
 
-        // Pick a random poem if any
-        this.randomPoem = this.poems.length
-          ? this.poems[Math.floor(Math.random() * this.poems.length)]
-          : undefined;
-
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Failed to fetch poems. Please try again.';
-        this.loading = false;
-      },
+  searchNow() {
+    // Optional: immediate search on Enter (skip debounce)
+    const q = this.query.trim();
+    this.loading = !!q;
+    this.router.navigate([], {
+      queryParams: q ? { q } : { q: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
     });
+    this.input$.next(q);
   }
 
   clear() {
     this.query = '';
+    this.onQueryChanged();
+  }
+
+  private resetResults() {
     this.poems = [];
     this.randomPoem = undefined;
     this.countAuthor = 0;

@@ -1,7 +1,7 @@
  
+# Code Challenge
 
 ## The Poet(Front-End)
- 
 
 Using Angular if possible or JavaScript or typescript, complete the following and be ready to execute and explain your work during the interview:
 1. Review the  https://poetrydb.org/ api.
@@ -12,8 +12,10 @@ Using Angular if possible or JavaScript or typescript, complete the following an
 
 
 
-Code Challenge
-
+### Ryans Answer - How it works
+- As you type, input is debounced (400ms) and searches run automatically.
+- The URL is kept in sync (?q=...), so you can copy/share the link and get the same results on load.
+- Hitting Enter triggers an immediate search (skips the debounce).
  
 
 ## The Elevator(Back-End)

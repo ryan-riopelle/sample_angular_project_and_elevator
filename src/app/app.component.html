@@ -3,12 +3,12 @@
   <input
     type="text"
     [value]="query"
-    (input)="query = $any($event.target).value"
-    (keyup.enter)="search()"
+    (input)="query = $any($event.target).value; onQueryChanged()"
+    (keyup.enter)="searchNow()"
     placeholder="Search by author or title (e.g., Shakespeare or Sonnet 18)"
     aria-label="Search poems by author or title"
   />
-  <button (click)="search()" [disabled]="loading || !query.trim()">Search</button>
+  <button (click)="searchNow()" [disabled]="loading || !query.trim()">Search</button>
   <button (click)="clear()" [disabled]="loading && !query">Clear</button>
 </div>
 
@@ -18,7 +18,7 @@
   <p>Found {{ countAuthor }} by author and {{ countTitle }} by title. Total unique: {{ poems.length }}</p>
 </div>
 
-<!-- Existing content -->
+<!-- Existing display -->
 <div>
   <h2>Shakespeare's Poems</h2>
   <ul>
