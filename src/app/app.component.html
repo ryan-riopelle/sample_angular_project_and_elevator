@@ -1,37 +1,40 @@
 <!-- src/app/app.component.html -->
-<div class="search">
-  <input
-    type="text"
-    [value]="query"
-    (input)="query = $any($event.target).value; onQueryChanged()"
-    (keyup.enter)="searchNow()"
-    placeholder="Search by author or title (e.g., Shakespeare or Sonnet 18)"
-    aria-label="Search poems by author or title"
-  />
-  <button (click)="searchNow()" [disabled]="loading || !query.trim()">Search</button>
-  <button (click)="clear()" [disabled]="loading && !query">Clear</button>
-</div>
+<div class="container">
+  <h1 class="app-title">Bluestaq The Poet - By Ryan Riopelle</h1>
 
-<div *ngIf="loading">Loading…</div>
-<div *ngIf="error" class="error">{{ error }}</div>
-<div *ngIf="!loading && !error && query">
-  <p>Found {{ countAuthor }} by author and {{ countTitle }} by title. Total unique: {{ poems.length }}</p>
-</div>
+  <div class="search">
+    <input
+      type="text"
+      [value]="query"
+      (input)="query = $any($event.target).value; onQueryChanged()"
+      (keyup.enter)="searchNow()"
+      placeholder="Search by author or title (e.g., Shakespeare or Sonnet 18)"
+      aria-label="Search poems by author or title"
+    />
+    <button (click)="searchNow()" [disabled]="loading || !query.trim()">Search</button>
+    <button (click)="clear()" [disabled]="loading && !query">Clear</button>
+  </div>
 
-<!-- Existing display -->
-<div>
-  <h2>Shakespeare's Poems</h2>
-  <ul>
-    <li *ngFor="let poem of poems">
-      <h3>{{ poem.title }}</h3>
-      <p *ngFor="let line of poem.lines">{{ line }}</p>
-    </li>
-  </ul>
+  <div *ngIf="loading">Loading…</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="!loading && !error && query">
+    <p>Found {{ countAuthor }} by author and {{ countTitle }} by title. Total unique: {{ poems.length }}</p>
+  </div>
 
-  <h2>Random Poem</h2>
-  <div *ngIf="randomPoem">
-    <h3>{{ randomPoem.title }} by {{ randomPoem.author }}</h3>
-    <p *ngFor="let line of randomPoem.lines">{{ line }}</p>
+  <!-- Existing display -->
+  <div>
+    <h2>Shakespeare's Poems</h2>
+    <ul>
+      <li *ngFor="let poem of poems">
+        <h3>{{ poem.title }}</h3>
+        <p *ngFor="let line of poem.lines">{{ line }}</p>
+      </li>
+    </ul>
+
+    <h2>Random Poem</h2>
+    <div *ngIf="randomPoem">
+      <h3>{{ randomPoem.title }} by {{ randomPoem.author }}</h3>
+      <p *ngFor="let line of randomPoem.lines">{{ line }}</p>
+    </div>
   </div>
 </div>
-
