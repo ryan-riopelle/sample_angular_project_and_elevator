@@ -11,8 +11,8 @@ Using Angular if possible or JavaScript or typescript, complete the following an
 5. Be prepared to expand the functionality of your solution during the interview.
 
 
-
-### Ryans Answer - How it works
+### Ryans Solution - How it works
+- Main files are in [app.component.ts](./src/appapp.component.ts), .html, .css, ect.
 - As you type, input is debounced (400ms) and searches run automatically.
 - The URL is kept in sync (?q=...), so you can copy/share the link and get the same results on load.
 - Hitting Enter triggers an immediate search (skips the debounce).
@@ -25,3 +25,6 @@ Provide code that simulates an elevator.  You may use any language (recommend us
 Please upload your code Git Hub for a discussion during your interview with our team.
 Additionally, document all assumptions and any features that weren't implemented.
 Please be prepared to discuss the assumptions and features that were not implemented during your interview!
+
+### Ryans Solution
+[Elevator Simulation Code Solution](data_backend_elevator.py)
