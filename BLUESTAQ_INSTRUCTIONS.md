@@ -12,7 +12,7 @@ Using Angular if possible or JavaScript or typescript, complete the following an
 
 
 ### Ryans Solution - How it works
-- Main files are in [app.component.ts](./src/appapp.component.ts), .html, .css, ect.
+- Main files are in [app.component.ts](./src/app/app.component.ts), .html, .css, ect.
 - As you type, input is debounced (400ms) and searches run automatically.
 - The URL is kept in sync (?q=...), so you can copy/share the link and get the same results on load.
 - Hitting Enter triggers an immediate search (skips the debounce).
