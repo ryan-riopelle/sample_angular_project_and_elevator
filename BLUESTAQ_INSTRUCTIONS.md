@@ -18,6 +18,11 @@ Using Angular if possible or JavaScript or typescript, complete the following an
 - Hitting Enter triggers an immediate search (skips the debounce).
  
 
+
+<img src="poetry_screenshot.png" alt="Control Panel" width="550" />
+
+
+
 ## The Elevator(Back-End)
  
 
@@ -28,3 +33,6 @@ Please be prepared to discuss the assumptions and features that were not impleme
 
 ### Ryans Solution
 [Elevator Simulation Code Solution](data_backend_elevator.py)
+
+
+<img src="elevator_output_sample.png" alt="Control Panel" width="550" />
